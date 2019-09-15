@@ -16,6 +16,10 @@ using namespace std;
 FILESLOG filesLog;
 
 bool areSameBlocks(char *blockA, char *blockB) {
+    if (blockA == NULL || blockB == NULL) {
+        return false;
+    }
+
     for (int i = 0; i < BLOCK_SIZE; i++) {
         if (blockA[i] != blockB[i]) {
             return false;
@@ -115,7 +119,7 @@ bool runFullBackup(unsigned int timestamp, string filename, char *fileContent) {
             continue;
         }
 
-        BACKUPINFO backupInfo = {fileSequenceNumber, blockIndex, MODIFY};
+        BACKUPINFO backupInfo = {fileSequenceNumber, blockIndex, APPEND};
         timestampData.backupInfo.push_back(backupInfo);
 
         fileSize -= BLOCK_SIZE;
@@ -125,28 +129,6 @@ bool runFullBackup(unsigned int timestamp, string filename, char *fileContent) {
     timestampData.totalBlocks = fileSequenceNumber;
     fileData.timestamp.insert(pair<int, TIMESTAMP>(timestamp, timestampData));
     filesLog.metadata.insert(pair<string, FILEDATA>(filename, fileData));
-
-    return true;
-}
-
-bool runIncrementalBackup(unsigned int timestamp, string filename, char *fileContent) {
-    if (filesLog.metadata.find(filename) == filesLog.metadata.end()) {
-        return runFullBackup(timestamp, filename, fileContent);
-    }
-
-    // fetching the filedata
-    FILEDATA fileData = filesLog.metadata.find(filename)->second;
-
-    // calculating total blocks for the new file content
-    TIMESTAMP timestampData;
-    unsigned int fileLength = (unsigned int)strlen(fileContent);
-    timestampData.totalBlocks = ceil(fileLength / BLOCK_SIZE);
-
-    // building latest file sequence
-
-
-    unsigned int latestTimestamp = getLatestTimestamp(fileData);
-    unsigned int latestBlockCount = getBlockCount(latestTimestamp, fileData);
 
     return true;
 }

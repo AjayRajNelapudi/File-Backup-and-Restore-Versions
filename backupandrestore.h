@@ -41,7 +41,6 @@ typedef struct FilesLog {
  */
 
 bool runFullBackup(unsigned int timestamp, string filename, char *fileContent);
-bool runIncrementalBackup(unsigned int timestamp, string filename, char *fileContent);
 void displayFileContents(string filename, unsigned int timestamp);
 
 #endif //FILEBACKUPANDRESTORE_BACKUPANDRESTORE_H
